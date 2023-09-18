@@ -4,7 +4,22 @@ import { BellIcon } from '@heroicons/react/24/solid'
 
 export const HomeScreen :FC = () => {
 
-  const [isOpenModal, setIsOpenModal] = useState(false)
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [hasModalBeenShown, setHasModalBeenShown] = useState(false);
+
+  useEffect(() => {
+    // Use a timer to open the modal after 5 seconds only if it hasn't been shown before
+    const timer = setTimeout(() => {
+      if (!hasModalBeenShown) {
+        setIsOpenModal(true);
+        setHasModalBeenShown(true);
+      }
+    }, 5000);
+
+    return () => {
+      clearTimeout(timer); // Clear the timer if the component unmounts before 5 seconds
+    }
+  }, [hasModalBeenShown]);
 
   useEffect(() => {
     if (!('serviceWorker' in navigator)) {
@@ -123,6 +138,7 @@ export const HomeScreen :FC = () => {
           </div>
         </div>
         </Modal>
+        
     </div>
   )
 }
