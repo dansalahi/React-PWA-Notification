@@ -1,6 +1,11 @@
-import { useEffect } from "react";
+import { FC, useEffect, useState } from "react";
+import { Modal } from "components/modal";
+import { BellIcon } from '@heroicons/react/24/solid'
 
-export const HomeScreen = () => {
+export const HomeScreen :FC = () => {
+
+  const [isOpenModal, setIsOpenModal] = useState(false)
+
   useEffect(() => {
     if (!('serviceWorker' in navigator)) {
       // Service Worker isn't supported on this browser, disable or hide UI.
@@ -88,16 +93,36 @@ export const HomeScreen = () => {
   };
 
   const getNotificationHandler = () => {
+    setIsOpenModal(false)
     askPermission().then((value) => {
       console.log('Notification permission result:', value);
     }).catch((error) => {
       console.log('Error requesting notification permission:', error);
     });
   };
-  return (
-    <div>
 
-        <button className='p-2 text-black' onClick={getNotificationHandler}>Request Notification Permission</button>
+
+
+  const showModal = () => { 
+    setIsOpenModal(true)
+  }
+
+  return (
+    <div className="flex flex-col items-center justify-center gap-2 p-5">
+        <button className='btn btn-primary' onClick={getNotificationHandler}>Request Notification Permission</button>
+        <button className="btn btn-info" onClick={showModal}>Show Modal</button>
+
+        <Modal isOpen={isOpenModal} onClose={() => { setIsOpenModal(false) }}>
+        <div className="flex flex-col items-center justify-between w-3/5 px-4 py-5 bg-white rounded-md min-h-[25vh] min-w-[80vw]">
+          <BellIcon className="w-8 h-8 text-blue-500" />
+          <h2 className="text-lg font-semibold">Do you want to recive notifications from my company?</h2>
+          <hr className="w-full h-px border-gray-100 border-1" />
+          <div className="flex items-center justify-between w-full">
+              <button className="btn btn-sm btn-primary" onClick={getNotificationHandler}>Yes, I do!</button>
+              <button className="btn btn-sm btn-error" onClick={() => setIsOpenModal(false) }>No</button>
+          </div>
+        </div>
+        </Modal>
     </div>
   )
 }
